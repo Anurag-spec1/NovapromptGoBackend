@@ -1,0 +1,10 @@
+DROP TRIGGER IF EXISTS trg_ad_keys_updated_at ON ad_keys;
+DROP TRIGGER IF EXISTS trg_descriptions_updated_at ON descriptions;
+DROP TRIGGER IF EXISTS trg_images_updated_at ON images;
+DROP FUNCTION IF EXISTS set_updated_at();
+DROP TABLE IF EXISTS ad_keys;
+DROP TABLE IF EXISTS descriptions;
+DROP TABLE IF EXISTS image_tags;
+DROP TABLE IF EXISTS tags;
+DROP TABLE IF EXISTS images;
+DROP TABLE IF EXISTS categories;
