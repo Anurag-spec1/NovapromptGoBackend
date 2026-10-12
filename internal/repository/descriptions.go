@@ -7,7 +7,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"github.com/yourname/novapromptgobackend/internal/models"
+	"github.com/Anurag-spec1/novapromptgobackend/internal/models"
 )
 
 type DescriptionRepo struct{ pool *pgxpool.Pool }

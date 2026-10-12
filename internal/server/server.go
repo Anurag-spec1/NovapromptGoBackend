@@ -6,9 +6,9 @@ import (
 	"github.com/go-chi/chi/v5"
 	chimw "github.com/go-chi/chi/v5/middleware"
 
-	"github.com/yourname/novapromptgobackend/internal/handlers"
-	custommw "github.com/yourname/novapromptgobackend/internal/middleware"
-	"github.com/yourname/novapromptgobackend/internal/repository"
+	"github.com/Anurag-spec1/novapromptgobackend/internal/handlers"
+	custommw "github.com/Anurag-spec1/novapromptgobackend/internal/middleware"
+	"github.com/Anurag-spec1/novapromptgobackend/internal/repository"
 )
 
 type Deps struct {

@@ -7,7 +7,7 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"github.com/yourname/novapromptgobackend/internal/httputil"
+	"github.com/Anurag-spec1/novapromptgobackend/internal/httputil"
 )
 
 type HealthHandler struct {

@@ -8,13 +8,12 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
-	"github.com/yourname/novapromptgobackend/internal/config"
-	"github.com/yourname/novapromptgobackend/internal/db"
-	"github.com/yourname/novapromptgobackend/internal/handlers"
-	"github.com/yourname/novapromptgobackend/internal/repository"
-	"github.com/yourname/novapromptgobackend/internal/server"
+	"github.com/Anurag-spec1/novapromptgobackend/internal/config"
+	"github.com/Anurag-spec1/novapromptgobackend/internal/db"
+	"github.com/Anurag-spec1/novapromptgobackend/internal/handlers"
+	"github.com/Anurag-spec1/novapromptgobackend/internal/repository"
+	"github.com/Anurag-spec1/novapromptgobackend/internal/server"
 )
 
 func main() {

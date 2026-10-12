@@ -6,9 +6,9 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
-	"github.com/yourname/novapromptgobackend/internal/httputil"
-	"github.com/yourname/novapromptgobackend/internal/models"
-	"github.com/yourname/novapromptgobackend/internal/repository"
+	"github.com/Anurag-spec1/novapromptgobackend/internal/httputil"
+	"github.com/Anurag-spec1/novapromptgobackend/internal/models"
+	"github.com/Anurag-spec1/novapromptgobackend/internal/repository"
 )
 
 type CategoryHandler struct{ Repo *repository.CategoryRepo }
