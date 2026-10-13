@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/Anurag-spec1/novapromptgobackend/internal/cache"
 	"github.com/Anurag-spec1/novapromptgobackend/internal/config"
 	"github.com/Anurag-spec1/novapromptgobackend/internal/db"
 	"github.com/Anurag-spec1/novapromptgobackend/internal/handlers"
@@ -28,21 +29,32 @@ func main() {
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
-
+	
 	pool, err := db.NewPool(ctx, cfg.DatabaseURL, cfg.DBMaxConns, cfg.DBMinConns, cfg.DBMaxConnLife, cfg.DBMaxConnIdle)
 	if err != nil {
 		slog.Error("db_pool", "err", err)
 		os.Exit(1)
 	}
 	defer pool.Close()
-
+	
+	cacheClient, err := cache.NewClient(ctx, cfg.RedisURL)
+	if err != nil {
+		slog.Error("redis_client", "err", err)
+		os.Exit(1)
+	}
+	defer cacheClient.Close()
+	
 	router := server.NewRouter(server.Deps{
-		Health:       &handlers.HealthHandler{Pool: pool},
+		Health: &handlers.HealthHandler{
+			Pool:  pool,
+			Cache: cacheClient,
+		},
 		Images:       &handlers.ImageHandler{Repo: repository.NewImageRepo(pool)},
-		Categories:   &handlers.CategoryHandler{Repo: repository.NewCategoryRepo(pool)},
+		Categories:   &handlers.CategoryHandler{Repo: repository.NewCategoryRepo(pool), Cache: cacheClient},
 		Tags:         &handlers.TagHandler{Repo: repository.NewTagRepo(pool)},
 		Descriptions: &handlers.DescriptionHandler{Repo: repository.NewDescriptionRepo(pool)},
-		AdKeys:       &handlers.AdKeyHandler{Repo: repository.NewAdKeyRepo(pool)},
+		AdKeys:       &handlers.AdKeyHandler{Repo: repository.NewAdKeyRepo(pool), Cache: cacheClient},
+		Cache:        cacheClient,
 	})
 
 	srv := &http.Server{
