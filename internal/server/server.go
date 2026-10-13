@@ -2,13 +2,14 @@ package server
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	chimw "github.com/go-chi/chi/v5/middleware"
 
+	"github.com/Anurag-spec1/novapromptgobackend/internal/cache"
 	"github.com/Anurag-spec1/novapromptgobackend/internal/handlers"
 	custommw "github.com/Anurag-spec1/novapromptgobackend/internal/middleware"
-	"github.com/Anurag-spec1/novapromptgobackend/internal/repository"
 )
 
 type Deps struct {
@@ -18,20 +19,28 @@ type Deps struct {
 	Tags         *handlers.TagHandler
 	Descriptions *handlers.DescriptionHandler
 	AdKeys       *handlers.AdKeyHandler
+	Cache        *cache.Client
 }
 
 func NewRouter(d Deps) http.Handler {
 	r := chi.NewRouter()
+	
 	r.Use(chimw.RequestID)
 	r.Use(chimw.RealIP)
 	r.Use(custommw.Recoverer)
 	r.Use(custommw.RequestLogger)
-	r.Use(chimw.Timeout(10_000_000_000)) 
-	r.Use(custommw.MaxBody(1 << 20))      
+	
+	generalRL := custommw.NewRateLimiter(d.Cache.Raw(), "nova:rl:general", 100, 50)
+	strictRL := custommw.NewRateLimiter(d.Cache.Raw(), "nova:rl:strict", 20, 10)
 
+	r.Use(generalRL.Middleware())
+
+	r.Use(chimw.Timeout(10 * time.Second))
+	r.Use(custommw.MaxBody(1 << 20))
+	
 	r.Get("/health", d.Health.Live)
 	r.Get("/ready", d.Health.Ready)
-
+	
 	r.Route("/api/v1", func(r chi.Router) {
 		r.Route("/images", func(r chi.Router) {
 			r.Get("/", d.Images.List)
@@ -62,9 +71,9 @@ func NewRouter(d Deps) http.Handler {
 			r.Get("/{key}", d.AdKeys.Get)
 			r.Put("/{key}", d.AdKeys.Upsert)
 		})
+		
+		_ = strictRL
 	})
 
 	return r
 }
-
-var _ = repository.ErrNotFound 
